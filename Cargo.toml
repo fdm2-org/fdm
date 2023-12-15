@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.75"
 colored = "2.1.0"
-clap = "4.4.11"
+clap = { version = "4.4.11", features = ["derive"] }
 reqwest = "0.11.22"
 futures = "0.3.29"
 futures-util = "0.3.29"
