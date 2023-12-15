@@ -1,4 +1,5 @@
 use std::sync::Mutex;
+use anyhow::Error;
 use colored::Colorize;
 use lazy_static::lazy_static;
 use crate::{fatal_error, log, warn};
@@ -62,4 +63,12 @@ impl Config
     }
     self
   }
+}
+
+pub fn wd() -> Result<String, Error>
+{
+  Ok(std::env::current_dir()?
+    .into_os_string()
+    .into_string()
+    .expect("os string should be convertible to string"))
 }

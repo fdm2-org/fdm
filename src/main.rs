@@ -2,6 +2,8 @@ mod cli;
 mod consts;
 mod config;
 mod rdm2;
+mod types;
+mod registry;
 
 use clap::Parser;
 use crate::config::CONFIG;
