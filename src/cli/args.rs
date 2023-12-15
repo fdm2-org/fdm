@@ -13,5 +13,11 @@ pub struct Args {
   #[arg(long)] pub offline: bool,
 
   /// Specifies the path to local registry
-  #[arg(long)] pub local: Option<String>
+  #[arg(long)] pub local: Option<String>,
+
+  /// Specifies target system. Useful for cross-compiling
+  #[arg(long)] pub operating_system: Option<String>,
+
+  /// Specifies target architecture. Useful for cross-compiling
+  #[arg(long)] pub architecture: Option<String>
 }

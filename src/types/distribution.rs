@@ -24,7 +24,7 @@ impl From<&str> for Distribution
     match value
     {
       "static" => Self::Static,
-      "shared" => Self::Shared,
+      "shared" | "dynamic" => Self::Shared,
       "sources" | "src" | "source" => Self::Sources,
       _ => Self::Unknown
     }
@@ -43,6 +43,12 @@ impl Display for Distribution
 {
   fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result
   {
-    write!(f, "{}", self.to_string())
+    write!(f, "{}", match self
+    {
+      Self::Static => "static",
+      Self::Shared => "shared",
+      Self::Sources => "sources",
+      _ => "unknown"
+    })
   }
 }

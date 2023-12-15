@@ -1,0 +1,11 @@
+1.0.0:
+  static: https://example.com/package/1_0_0-static.tar.gz
+  dynamic: https://example.com/package/1_0_0-dynamic.tar.gz
+  source: https://example.com/package/1_0_0-source.tar.gz
+  dependencies:
+    - package-a:
+        version: 1.0.0
+        distribution: static
+    - package-b:
+        version: 1.0.0
+        distribution: dynamic

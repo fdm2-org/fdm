@@ -20,7 +20,7 @@ git2_credentials = "0.13.0"
 yaml-rust = "0.4.5"
 scan_dir = "0.3.3"
 indicatif = "0.17.7"
-log = "0.4.20"
+whoami = "1.4.1"
 
 [build-dependencies]
 build-data = "0.1.5"
