@@ -1,0 +1,25 @@
+[package]
+name = "rdm2"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.75"
+colored = "2.1.0"
+clap = "4.4.11"
+reqwest = "0.11.22"
+futures = "0.3.29"
+futures-util = "0.3.29"
+tokio = { version = "1.34.0", features = ["rt-multi-thread", "fs", "macros"] }
+tokio-stream = { version = "0.1.14", features = ["io-util"] }
+url = "2.5.0"
+pkg-config = "0.3.27"
+lazy_static = "1.4.0"
+git2 = "0.18.1"
+git2_credentials = "0.13.0"
+yaml-rust = "0.4.5"
+scan_dir = "0.3.3"
+indicatif = "0.17.7"
+
+[build-dependencies]
+build-data = "0.1.5"
