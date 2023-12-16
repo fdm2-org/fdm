@@ -7,8 +7,9 @@ pub use colored::Colorize;
 lazy_static!
 {
   pub static ref RDM_NAME_COLORED: String = RDM_NAME.cyan().bold().to_string();
-  pub static ref LOGGING_WARNING_MSG: String = "warning".yellow().bold().to_string();
-  pub static ref LOGGING_ERROR_MSG: String = "unrecoverable error occurred".red().bold().to_string();
+  pub static ref LOGGING_WARNING_MSG: String = "⚠ warning".yellow().bold().to_string();
+  pub static ref LOGGING_ERROR_MSG: String = "⛔ unrecoverable error occurred".red().bold()
+  .to_string();
 }
 
 #[macro_export] macro_rules! log {

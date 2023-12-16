@@ -103,7 +103,7 @@ impl Manifest
         "dependencies:".bold()
       );
       for (name, dep) in deps {
-        log!("\t{} version {}/{}",
+        log!("\t🔶 {} version {}/{}",
           name.to_string().cyan().bold(),
           dep.version.to_string().bold(),
           dep.distribution.to_string().white().bold()
