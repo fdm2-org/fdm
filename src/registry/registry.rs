@@ -80,6 +80,7 @@ impl Registry
     }
 
     log!("{}" , "registry initialized!".green().bold());
+    self.dump_to_cli()?;
     Ok(self)
   }
 
@@ -167,7 +168,7 @@ impl Registry
         let descriptor_hash = descriptor
           .as_hash()
           .context("descriptor is none")?;
-        //let mut distribution = HashMap::new();
+        let mut distribution = HashMap::new();
         let mut dependencies = HashMap::new();
         for (key, value) in descriptor_hash
         {
@@ -212,14 +213,42 @@ impl Registry
               let value = value
                 .as_str()
                 .context("value is none (sources)")?;
+              let url = Url::parse(value)?;
+              distribution.insert(
+                Distribution::Sources,
+                HashMap::from([(
+                  PlatformArch::Any,
+                  url
+                )])
+              );
             }
             _ => {
               let value = value
                 .as_hash()
                 .context("value is none (other)")?;
+              for (platform, url) in value
+              {
+                let platform = PlatformArch::try_from(platform
+                  .as_str()
+                  .context("platform is none")?)?;
+                let url = url
+                  .as_str()
+                  .context("url is none")?;
+                distribution.insert(
+                  Distribution::try_from(key.as_str().context("key is none")?)?,
+                  HashMap::from([(platform, Url::parse(url)?)])
+                );
+              }
             }
           }
         }
+        index.versions.insert(
+          version,
+          Descriptor {
+            distribution,
+            dependencies
+          }
+        );
       }
     }
     Ok(index)
@@ -229,7 +258,50 @@ impl Registry
   {
     println!();
     log!("{}", "-- registry index --".cyan().bold());
-    todo!();
+    for (name, reg_index) in &self.index
+    {
+      let mut str_to_print = format!("{}:", name.to_string().yellow().bold());
+      for (version, descriptor) in &reg_index.versions
+      {
+        str_to_print = format!(
+          "{} {}",
+          str_to_print,
+          version.to_string().green().bold()
+        );
+        for (distribution, urls) in &descriptor.distribution
+        {
+          str_to_print = format!(
+            "{} ({}/{:?})",
+            str_to_print,
+            distribution.to_string().blue().bold(),
+            urls.keys()
+          )
+        }
+        if !descriptor.dependencies.is_empty()
+        {
+          str_to_print = format!(
+            "{} ➤ depends on",
+            str_to_print
+          );
+        }
+        else
+        {
+          str_to_print = format!(
+            "{} ◆ no dependencies",
+            str_to_print
+          )
+        }
+        for (name, dependency) in &descriptor.dependencies
+        {
+          str_to_print = format!(
+            "{} {}",
+            str_to_print,
+            name.to_string().bold()
+          )
+        }
+      }
+      log!("{}", str_to_print);
+    }
     println!();
     Ok(())
   }

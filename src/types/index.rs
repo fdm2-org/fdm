@@ -3,11 +3,13 @@ use url::Url;
 use crate::types::dependencies::Dependency;
 use crate::types::{Distribution, PlatformArch, Version};
 
+#[derive(Debug)]
 pub struct RegistryIndex
 {
   pub versions: HashMap<Version, Descriptor>
 }
 
+#[derive(Debug)]
 pub struct Descriptor
 {
   pub distribution: HashMap<Distribution, HashMap<PlatformArch, Url>>,
