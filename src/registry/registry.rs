@@ -321,7 +321,7 @@ impl Registry
         .contains_key(&dependency
           .arch
           .as_ref()
-          .unwrap_or(&PlatformArch::Any)
+          .unwrap_or(&PlatformArch::from_env().unwrap_or(PlatformArch::Any))
         )
       ).unwrap_or(false)
   }
