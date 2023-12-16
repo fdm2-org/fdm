@@ -270,11 +270,16 @@ impl Registry
         );
         for (distribution, urls) in &descriptor.distribution
         {
+          let urls_keys = urls
+            .iter()
+            .map(|val| format!("{}", val.0))
+            .collect::<Vec<String>>()
+            .join(" ");
           str_to_print = format!(
-            "{} ({}/{:?})",
+            "{} ({}/{})",
             str_to_print,
             distribution.to_string().blue().bold(),
-            urls.keys()
+            urls_keys.bold().italic()
           )
         }
         if !descriptor.dependencies.is_empty()
