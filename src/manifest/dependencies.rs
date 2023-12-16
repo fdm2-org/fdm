@@ -1,18 +1,12 @@
 use serde::Deserialize;
 use crate::types::{Distribution, Version};
+use crate::types::dependencies::Dependency;
 
 #[derive(Debug, Deserialize)]
 pub struct DependencyPT
 {
   pub version: String,
   pub distribution: String,
-}
-
-#[derive(Debug, Clone)]
-pub struct Dependency
-{
-  pub version: Version,
-  pub distribution: Distribution
 }
 
 impl TryFrom<DependencyPT> for Dependency
@@ -23,7 +17,8 @@ impl TryFrom<DependencyPT> for Dependency
   {
     Ok(Self {
       version: Version::try_from(value.version.as_str())?,
-      distribution: Distribution::from(value.distribution.as_str())
+      distribution: Distribution::from(value.distribution.as_str()),
+      arch: None
     })
   }
 }

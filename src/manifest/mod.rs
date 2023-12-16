@@ -7,13 +7,5 @@ pub use package::
   Package,
   PackagePT
 };
-pub use dependencies::
-{
-  Dependency,
-  DependencyPT
-};
-pub use manifest::
-{
-  Manifest,
-  ManifestPT
-};
+pub use dependencies::DependencyPT;
+pub use manifest::Manifest;

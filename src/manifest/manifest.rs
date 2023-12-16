@@ -7,11 +7,11 @@ use crate::config::wd;
 use crate::consts::RDM_MANIFEST_FILENAME;
 use crate::log;
 use crate::manifest::{
-  Dependency,
   DependencyPT,
   Package,
   PackagePT
 };
+use crate::types::dependencies::Dependency;
 
 #[derive(Debug)]
 pub struct Manifest
@@ -21,7 +21,7 @@ pub struct Manifest
 }
 
 #[derive(Debug, Deserialize)]
-pub struct ManifestPT
+struct ManifestPT
 {
   pub package: PackagePT,
   pub dependencies: Option<HashMap<String, DependencyPT>>
@@ -63,13 +63,13 @@ impl TryFrom<ManifestPT> for Manifest
 
 impl Manifest
 {
-  pub fn from_toml_string(toml: &str) -> Result<ManifestPT, Error>
+  fn from_toml_string(toml: &str) -> Result<ManifestPT, Error>
   {
     let manifest: ManifestPT = toml::from_str(toml)?;
     Ok(manifest)
   }
 
-  pub fn from_toml_file(path: &str) -> Result<ManifestPT, Error>
+  fn from_toml_file(path: &str) -> Result<ManifestPT, Error>
   {
     let toml = std::fs::read_to_string(path)?;
     Self::from_toml_string(&toml)
