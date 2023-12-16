@@ -10,7 +10,14 @@ use yaml_rust::Yaml;
 use crate::config::{CONFIG, wd};
 use crate::consts::{RDM_DIRECTORY_NAME, RDM_REGISTRY_NAME};
 use crate::log;
-use crate::types::{Distribution, PlatformArch, RegistryIndex, Descriptor, Version};
+use crate::types::{
+  Distribution,
+  PlatformArch,
+  RegistryIndex,
+  Descriptor,
+  Version
+};
+use crate::types::dependencies::Dependency;
 
 lazy_static!
 {
@@ -146,77 +153,83 @@ impl Registry
 
   fn parse_yaml(&self, yaml: &Vec<Yaml>) -> Result<RegistryIndex, Error>
   {
-    let mut registry_index = RegistryIndex::default();
-    for hash in yaml {
+    let mut index = RegistryIndex::default();
+    for hash in yaml
+    {
       let content = hash
         .as_hash()
-        .context("hash is not hash")?;
-      for (k, v) in content {
-        let version = k.as_str().context("key is not string")?;
-        let entry = v.clone().into_hash().context("value is not hash")?;
-        let mut registry_index_pair = Descriptor::default();
-        for (key, value) in entry {
-          match key.as_str().context("key is not string")? {
+        .context("hash is none")?;
+      for (version, descriptor) in content
+      {
+        let version = Version::try_from(version
+          .as_str()
+          .context("version is none")?)?;
+        let descriptor_hash = descriptor
+          .as_hash()
+          .context("descriptor is none")?;
+        //let mut distribution = HashMap::new();
+        let mut dependencies = HashMap::new();
+        for (key, value) in descriptor_hash
+        {
+          match key.as_str().context("key is none")? {
             "dependencies" => {
-              // TODO: parse dependencies
-            },
-            _ => {
-              let distribution = Distribution::from(value
-                .as_str()
-                .context("value is not string")?
-              );
-              let mut descriptor = PlatformDescriptor
+              let value = value
+                .as_vec()
+                .context("value is none (array)")?;
+              for hash in value
               {
-                distribution,
-                urls: HashMap::new()
-              };
-              match key.as_str().context("key is not string")? {
-                "source" => {
-                  let download_url = Url::parse(value.as_str().context("url is not string")?)?;
-                  descriptor.urls.insert(PlatformArch::Any, download_url);
-                  registry_index_pair.distribution = descriptor;
-                },
-                _ => {
-                  let platforms = key.into_hash().context("platforms is not hash")?;
-                  for (platform, url) in platforms {
-                    let arch = PlatformArch::from(platform
+                let hash = hash
+                  .as_hash()
+                  .context("value is none (hash)")?;
+                for (name, dependency) in hash
+                {
+                  let name = name
+                    .as_str()
+                    .context("name is none")?;
+                  let dependency = dependency
+                    .as_hash()
+                    .context("dependency is none")?;
+                  let mut dependency_struct = Dependency::default();
+                  for (key, value) in dependency
+                  {
+                    let key = key
                       .as_str()
-                      .context("platform is not string")?
-                    );
-                    let download_url = Url::parse(url.as_str().context("url is not string")?)?;
-                    descriptor.urls.insert(arch, download_url);
+                      .context("key is none")?;
+                    let value = value
+                      .as_str()
+                      .context("value is none")?;
+                    match key {
+                      "version" => dependency_struct.version = Version::try_from(value)?,
+                      "distribution" => dependency_struct.distribution = Distribution::try_from(value)?,
+                      _ => bail!("unknown key: {}", key)
+                    }
                   }
-                  registry_index_pair.distribution = descriptor;
+                  dependencies.insert(name.to_string(), dependency_struct);
                 }
               }
+            },
+            "source" => {
+              let value = value
+                .as_str()
+                .context("value is none (sources)")?;
+            }
+            _ => {
+              let value = value
+                .as_hash()
+                .context("value is none (other)")?;
             }
           }
         }
-        registry_index.versions.insert(Version::try_from(version)?, registry_index_pair);
       }
     }
-    Ok(registry_index)
+    Ok(index)
   }
 
   fn dump_to_cli(&self) -> Result<(), Error>
   {
     println!();
     log!("{}", "-- registry index --".cyan().bold());
-    for (package, idx) in &self.index
-    {
-      let name = package;
-      let mut str: String = String::new();
-      // for (version, pair) in &idx.versions
-      // {
-      //   str.push_str(&format!(
-      //     "{}: {} {:?}; ",
-      //     version.to_string().yellow().bold(),
-      //     &pair.distribution.to_string().bold(),
-      //     &pair.distribution.urls.keys()
-      //   ));
-      // }
-
-    }
+    todo!();
     println!();
     Ok(())
   }
