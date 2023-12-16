@@ -80,7 +80,6 @@ impl Registry
     }
 
     log!("{}" , "registry initialized!".green().bold());
-    self.dump_to_cli()?;
     Ok(self)
   }
 
@@ -254,7 +253,7 @@ impl Registry
     Ok(index)
   }
 
-  fn dump_to_cli(&self) -> Result<(), Error>
+  pub fn dump_to_cli(&self) -> Result<(), Error>
   {
     println!();
     log!("{}", "-- registry index --".cyan().bold());
@@ -310,7 +309,6 @@ impl Registry
       }
       log!("{}", str_to_print);
     }
-    println!();
     Ok(())
   }
 

@@ -24,6 +24,7 @@ walkdir = "2.4.0"
 toml = "0.8.8"
 tar = "0.4.40"
 flate2 = "1.0.28"
+serde = { version = "1.0.193", features = ["derive"] }
 
 [build-dependencies]
 build-data = "0.1.5"

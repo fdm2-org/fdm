@@ -1,6 +1,7 @@
 use std::fmt::Display;
+use serde::Deserialize;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub enum Distribution
 {
   Static,

@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, PartialEq, Hash, Eq, PartialOrd, Ord)]
+use serde::Deserialize;
+
+#[derive(Debug, Clone, PartialEq, Hash, Eq, PartialOrd, Ord, Deserialize)]
 pub struct Version
 {
   pub major: u32,

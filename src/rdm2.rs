@@ -6,6 +6,9 @@ pub fn run() -> Result<(), Error>
   REGISTRY
     .lock()
     .unwrap()
-    .init_registry()?;
+    .init_registry()?
+    .dump_to_cli()?;
+  let manifest = crate::manifest::Manifest::seek()?
+    .dump_to_cli();
   Ok(())
 }

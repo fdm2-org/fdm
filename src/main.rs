@@ -4,6 +4,7 @@ mod config;
 mod rdm2;
 mod types;
 mod registry;
+mod manifest;
 
 use clap::Parser;
 use crate::config::CONFIG;
