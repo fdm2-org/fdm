@@ -1,7 +1,7 @@
 use std::fmt::Display;
 use anyhow::Error;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum PlatformArch
 {
   WindowsX32,
@@ -9,6 +9,7 @@ pub enum PlatformArch
   LinuxX32,
   LinuxX64,
   Android,
+  Any,
   Unknown
 }
 
@@ -22,6 +23,7 @@ impl From<&str> for PlatformArch
       "windows-x64" => Self::WindowsX64,
       "linux-x32" => Self::LinuxX32,
       "linux-x64" => Self::LinuxX64,
+      "any" => Self::Any,
       "android" => Self::Android,
       _ => Self::Unknown
     }
@@ -47,6 +49,7 @@ impl Display for PlatformArch
       Self::LinuxX32 => "linux-x32",
       Self::LinuxX64 => "linux-x64",
       Self::Android => "android",
+      Self::Any => "any",
       _ => "unknown"
     })
   }

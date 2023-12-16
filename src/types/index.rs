@@ -1,14 +1,38 @@
 use std::collections::HashMap;
+use url::Url;
 use crate::types::dependencies::Dependency;
-use crate::types::{Descriptor, Version};
+use crate::types::{Distribution, PlatformArch, Version};
 
 pub struct RegistryIndex
 {
-  pub versions: HashMap<Version, RegistryIndexPair>
+  pub versions: HashMap<Version, Descriptor>
 }
 
-pub struct RegistryIndexPair
+pub struct Descriptor
 {
-  pub distribution: Descriptor,
+  pub distribution: HashMap<Distribution, HashMap<PlatformArch, Url>>,
   pub dependencies: HashMap<String, Dependency>
+}
+
+impl Default for RegistryIndex
+{
+  fn default() -> Self
+  {
+    Self
+    {
+      versions: HashMap::new()
+    }
+  }
+}
+
+impl Default for Descriptor
+{
+  fn default() -> Self
+  {
+    Self
+    {
+      distribution: HashMap::new(),
+      dependencies: HashMap::new()
+    }
+  }
 }
