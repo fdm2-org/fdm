@@ -43,7 +43,12 @@ impl Dependency
 {
   pub async fn download_from_registry(&self, name: &str) -> Result<(), Error>
   {
-    log!("downloading dependency: {}", name.to_string().magenta().bold());
+    log!("downloading {} {}/{}/{}",
+      name.to_string().bright_blue().bold(),
+      self.version.to_string().bold(),
+      self.distribution.to_string().white().bold(),
+      self.arch.as_ref().unwrap_or(&PlatformArch::Any).to_string().white().italic()
+    );
     let path = self.cache_path(name);
     if !Path::new(&path).exists() {
       self.create_directory(name)?;
@@ -51,12 +56,9 @@ impl Dependency
     let registry = crate::registry::REGISTRY
       .lock()
       .unwrap();
-    ensure!(registry.contains(name, &self), "dependency {} version {}/{}/{} not found in registry",
-            name,
-            self.distribution,
-            self.version,
-            self.arch.as_ref().unwrap_or(&PlatformArch::Any)
-    );
+    let url = registry
+      .get(name, &self)?;
+    // todo: download
     Ok(())
   }
 

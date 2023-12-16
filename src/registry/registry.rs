@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Mutex;
-use anyhow::{bail, Context, Error};
+use anyhow::{bail, Context, ensure, Error};
 use colored::Colorize;
 use lazy_static::lazy_static;
 use url::Url;
@@ -317,17 +317,29 @@ impl Registry
     self.index.get(name)
       .and_then(|reg_index| reg_index.versions.get(&dependency.version))
       .and_then(|descriptor| descriptor.distribution.get(&dependency.distribution))
-      .map(|urls| urls
-        .contains_key(&dependency
-          .arch
-          .as_ref()
-          .unwrap_or(&PlatformArch::from_env().unwrap_or(PlatformArch::Any))
-        )
+      .map(|urls| {
+        if dependency.distribution == Distribution::Sources {
+          true
+        } else {
+          urls
+            .contains_key(&dependency
+              .arch
+              .as_ref()
+              .unwrap_or(&PlatformArch::from_env().unwrap_or(PlatformArch::Any))
+            )
+        }
+      }
       ).unwrap_or(false)
   }
 
   pub fn get(&self, name: &str, dependency: &Dependency) -> Result<Url, Error>
   {
+    ensure!(self.contains(name, dependency), "dependency {} version {}/{}/{} not found in registry",
+            name,
+            dependency.distribution,
+            dependency.version,
+            dependency.arch.as_ref().unwrap_or(&PlatformArch::Any)
+    );
     self.index.get(name)
       .and_then(|reg_index| reg_index.versions.get(&dependency.version))
       .and_then(|descriptor| descriptor.distribution.get(&dependency.distribution))
@@ -337,7 +349,14 @@ impl Registry
           .as_ref()
           .unwrap_or(&PlatformArch::Any)
         )
-      ).context("url not found")
-      .map(|url| url.clone())
+      ).context(format!("package {} version {}/{}/{} not found in registry",
+        name,
+        dependency.version,
+        dependency.distribution,
+        dependency
+          .arch
+          .as_ref()
+          .unwrap_or(&PlatformArch::Any)
+      )).map(|url| url.clone())
   }
 }

@@ -9,6 +9,7 @@ pub fn run() -> Result<(), Error>
     .init_registry()?
     .dump_to_cli()?;
   let manifest = crate::manifest::Manifest::seek()?
-    .dump_to_cli();
+    .dump_to_cli()?
+    .download_dependencies()?;
   Ok(())
 }

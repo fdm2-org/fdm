@@ -88,7 +88,7 @@ impl Manifest
     )
   }
 
-  pub fn dump_to_cli(&self) -> Result<(), Error>
+  pub fn dump_to_cli(&self) -> Result<&Self, Error>
   {
     println!();
     log!("{}" , "-- manifest --".green().bold());
@@ -110,6 +110,27 @@ impl Manifest
         );
       }
     }
-    Ok(())
+    Ok(self)
+  }
+
+  #[tokio::main]
+  pub async fn download_dependencies(&self) -> Result<&Self, Error>
+  {
+    println!();
+    if self.dependencies.is_none() {
+      log!("no dependencies for package: {}", self.package.name.to_string().magenta().bold());
+      return Ok(self);
+    } else {
+      log!("downloading dependencies for package: {}", self.package.name.to_string().magenta().bold());
+    }
+
+    let deps = self.dependencies.as_ref().unwrap();
+    // find indirect dependencies
+    // todo
+    for dependency in deps {
+      dependency.1.download_from_registry(dependency.0.as_str())
+        .await?;
+    }
+    Ok(self)
   }
 }
