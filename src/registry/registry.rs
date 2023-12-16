@@ -76,7 +76,7 @@ impl Registry
       }
     };
     for yaml in self.collect_yaml()? {
-      self.index.insert(yaml.0, self.parse_yaml(&yaml.1)?);
+      self.index.insert(yaml.0, Self::parse_yaml(&yaml.1)?);
     }
 
     log!("{}" , "registry initialized!".green().bold());
@@ -152,7 +152,7 @@ impl Registry
     Ok(yaml_files)
   }
 
-  fn parse_yaml(&self, yaml: &Vec<Yaml>) -> Result<RegistryIndex, Error>
+  fn parse_yaml(yaml: &Vec<Yaml>) -> Result<RegistryIndex, Error>
   {
     let mut index = RegistryIndex::default();
     for hash in yaml
@@ -285,23 +285,26 @@ impl Registry
         if !descriptor.dependencies.is_empty()
         {
           str_to_print = format!(
-            "{} ➤ depends on",
-            str_to_print
+            "{} ➤ {}",
+            str_to_print,
+            "depends on".bright_purple()
           );
         }
         else
         {
           str_to_print = format!(
-            "{} ◆ no dependencies",
-            str_to_print
+            "{} ◆ {}",
+            str_to_print,
+            "clean".green()
           )
         }
         for (name, dependency) in &descriptor.dependencies
         {
           str_to_print = format!(
-            "{} {}",
+            "{} {} {}",
             str_to_print,
-            name.to_string().bold()
+            name.to_string().bold(),
+            dependency.version.to_string().bold()
           )
         }
       }
@@ -309,5 +312,34 @@ impl Registry
     }
     println!();
     Ok(())
+  }
+
+  pub fn contains(&self, name: &str, dependency: &Dependency) -> bool
+  {
+    self.index.get(name)
+      .and_then(|reg_index| reg_index.versions.get(&dependency.version))
+      .and_then(|descriptor| descriptor.distribution.get(&dependency.distribution))
+      .map(|urls| urls
+        .contains_key(&dependency
+          .arch
+          .as_ref()
+          .unwrap_or(&PlatformArch::Any)
+        )
+      ).unwrap_or(false)
+  }
+
+  pub fn get(&self, name: &str, dependency: &Dependency) -> Result<Url, Error>
+  {
+    self.index.get(name)
+      .and_then(|reg_index| reg_index.versions.get(&dependency.version))
+      .and_then(|descriptor| descriptor.distribution.get(&dependency.distribution))
+      .and_then(|urls| urls
+        .get(&dependency
+          .arch
+          .as_ref()
+          .unwrap_or(&PlatformArch::Any)
+        )
+      ).context("url not found")
+      .map(|url| url.clone())
   }
 }
