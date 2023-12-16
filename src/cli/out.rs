@@ -43,6 +43,7 @@ pub fn greet()
     RDM_NAME.yellow().bold(),
     RDM_VERSION.magenta().bold()
   );
+  println!()
 }
 
 pub fn version()
