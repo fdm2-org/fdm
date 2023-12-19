@@ -11,6 +11,7 @@ use crate::manifest::{
   Package,
   PackagePT
 };
+use crate::registry::REGISTRY;
 use crate::types::dependencies::Dependency;
 
 #[derive(Debug)]
@@ -125,9 +126,20 @@ impl Manifest
     }
 
     let deps = self.dependencies.as_ref().unwrap();
-    // find indirect dependencies
-    // todo
-    for dependency in deps {
+    let mut dependency_tree = HashMap::new();
+    dependency_tree.extend(deps.clone());
+    {
+      // mutex scope
+      let reg = REGISTRY
+          .lock()
+          .unwrap();
+      for (name, dep) in deps {
+        let t = reg.get_indirect_dependencies(name, dep)?;
+        dependency_tree.extend(t);
+      }
+    }
+    println!("{:?}", dependency_tree);
+    for dependency in dependency_tree {
       dependency.1.download_from_registry(dependency.0.as_str())
         .await?;
     }

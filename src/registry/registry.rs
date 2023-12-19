@@ -359,4 +359,41 @@ impl Registry
           .unwrap_or(&PlatformArch::Any)
       )).map(|url| url.clone())
   }
+
+  pub fn get_indirect_dependencies(&self, name: &str, dependency: &Dependency) -> Result<HashMap<String, Dependency>, Error>
+  {
+    let index = self.index.get(name);
+    if index.is_none() {
+      return Ok(HashMap::new());
+    }
+    let index = index.unwrap();
+    let desc = index.versions.get(&dependency.version);
+    if desc.is_none() {
+      return Ok(HashMap::new());
+    }
+    let desc = desc.unwrap();
+    let deps = &desc.dependencies;
+    if deps.is_empty() {
+      return Ok(HashMap::new());
+    }
+    Ok(deps.clone())
+  }
+
+  pub fn get_recursively(&self, name: &str, dependency: &Dependency) -> Result<Vec<Url>, Error>
+  {
+    let mut urls = Vec::new();
+    self.get_recursively_internal(name, dependency, &mut urls)?;
+    Ok(urls)
+  }
+
+  fn get_recursively_internal(&self, name: &str, dependency: &Dependency, urls: &mut Vec<Url>)
+    -> Result<(), Error>
+  {
+    let indirect = self.get_indirect_dependencies(name, dependency)?;
+    for (dep_name, dep) in indirect.iter() {
+      urls.push(self.get(dep_name, dep)?);
+      self.get_recursively_internal(dep_name, dep, urls)?;
+    }
+    Ok(())
+  }
 }
