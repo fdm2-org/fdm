@@ -1,7 +1,11 @@
+use futures_util::stream::StreamExt;
 use std::fmt::Display;
+use std::fs::File;
+use std::io::Write;
 use std::path::Path;
 use anyhow::{ensure, Error};
 use colored::Colorize;
+use indicatif::{ProgressBar, ProgressDrawTarget};
 use crate::config::wd;
 use crate::consts::{RDM_CACHE_NAME, RDM_DIRECTORY_NAME};
 use crate::{fatal_error, log};
@@ -58,13 +62,46 @@ impl Dependency
       .unwrap();
     let url = registry
       .get(name, &self)?;
-    // todo: download
+
+    let response = registry.client
+      .get(url.as_str())
+      .send()
+      .await?;
+
+    ensure!(response.status().is_success(), format!("failed to download: status code {}", response.status().as_str()));
+    let total = response
+      .content_length()
+      .unwrap_or(1);
+    let pb = ProgressBar::new(total)
+      .with_style(
+        indicatif::ProgressStyle::default_bar()
+          .template("{wide_msg} {spinner:.red} [{bar:20.yellow/white}] {pos:10}/ {len:10} ({percent:3}%)")
+          .expect("template should be valid")
+          .progress_chars("█░░")
+      );
+    pb.set_draw_target(ProgressDrawTarget::stdout_with_hz(5));
+    pb.set_message(format!("downloading {}...", name));
+
+    let file_path = Path::new(&path)
+      .join("archive.tar.gz");
+    let mut file = File::create(&file_path)?;
+    let mut downloaded: u64 = 0;
+    let mut stream = response.bytes_stream();
+    while let Some(item) = stream.next().await {
+      let chunk = item?;
+      file.write_all(&chunk)?;
+      let new = (downloaded + chunk.len() as u64).min(total);
+      downloaded = new;
+      pb.set_position(new);
+    }
+    pb.finish_with_message("done!");
     Ok(())
   }
 
   fn create_directory(&self, name: &str) -> Result<(), Error>
   {
-    log!("creating cache directory at: {}", self.cache_path(name));
+    let p = self.cache_path(name);
+    log!("creating cache directory at: ...{}", &p[p.len()-30..]);
     std::fs::create_dir_all(&self.cache_path(name))?;
     Ok(())
   }

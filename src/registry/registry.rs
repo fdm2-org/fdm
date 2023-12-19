@@ -10,6 +10,7 @@ use yaml_rust::Yaml;
 use crate::config::{CONFIG, wd};
 use crate::consts::{RDM_DIRECTORY_NAME, RDM_REGISTRY_NAME};
 use crate::log;
+use crate::registry::client_builder::{make_client, UserAgent};
 use crate::types::{
   Distribution,
   PlatformArch,
@@ -27,7 +28,8 @@ lazy_static!
 pub struct Registry
 {
   pub path: String,
-  pub index: HashMap<String, RegistryIndex>
+  pub index: HashMap<String, RegistryIndex>,
+  pub client: reqwest::Client
 }
 
 impl Default for Registry
@@ -37,7 +39,8 @@ impl Default for Registry
     Self
     {
       path: String::from(""),
-      index: HashMap::new()
+      index: HashMap::new(),
+      client: make_client(&Some(UserAgent::default()), true, 10).unwrap()
     }
   }
 }
@@ -55,7 +58,8 @@ impl Registry
     Ok(Self
     {
       path,
-      index: HashMap::new()
+      index: HashMap::new(),
+      client: make_client(&Some(UserAgent::default()), true, 10)?
     })
   }
 
@@ -379,19 +383,19 @@ impl Registry
     Ok(deps.clone())
   }
 
-  pub fn get_recursively(&self, name: &str, dependency: &Dependency) -> Result<Vec<Url>, Error>
+  pub fn get_recursively(&self, name: &str, dependency: &Dependency) -> Result<HashMap<String, Dependency>, Error>
   {
-    let mut urls = Vec::new();
+    let mut urls = HashMap::new();
     self.get_recursively_internal(name, dependency, &mut urls)?;
     Ok(urls)
   }
 
-  fn get_recursively_internal(&self, name: &str, dependency: &Dependency, urls: &mut Vec<Url>)
+  fn get_recursively_internal(&self, name: &str, dependency: &Dependency, urls: &mut HashMap<String, Dependency>)
     -> Result<(), Error>
   {
     let indirect = self.get_indirect_dependencies(name, dependency)?;
     for (dep_name, dep) in indirect.iter() {
-      urls.push(self.get(dep_name, dep)?);
+      urls.insert(dep_name.clone(), dep.clone());
       self.get_recursively_internal(dep_name, dep, urls)?;
     }
     Ok(())

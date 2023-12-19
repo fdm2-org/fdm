@@ -134,11 +134,10 @@ impl Manifest
           .lock()
           .unwrap();
       for (name, dep) in deps {
-        let t = reg.get_indirect_dependencies(name, dep)?;
+        let t = reg.get_recursively(name, dep)?;
         dependency_tree.extend(t);
       }
     }
-    println!("{:?}", dependency_tree);
     for dependency in dependency_tree {
       dependency.1.download_from_registry(dependency.0.as_str())
         .await?;
