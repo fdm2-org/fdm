@@ -115,12 +115,13 @@ impl Manifest
   }
 
   #[tokio::main]
-  pub async fn download_dependencies(&self) -> Result<&Self, Error>
+  pub async fn download_dependencies(&self) -> Result<Vec<String>, Error>
   {
     println!();
+    let mut names = Vec::new();
     if self.dependencies.is_none() {
       log!("no dependencies for package: {}", self.package.name.to_string().magenta().bold());
-      return Ok(self);
+      return Ok(names);
     } else {
       log!("downloading dependencies for package: {}", self.package.name.to_string().magenta().bold());
     }
@@ -141,7 +142,8 @@ impl Manifest
     for dependency in dependency_tree {
       dependency.1.download_from_registry(dependency.0.as_str())
         .await?;
+      names.push(dependency.0);
     }
-    Ok(self)
+    Ok(names)
   }
 }

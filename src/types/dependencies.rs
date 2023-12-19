@@ -8,7 +8,7 @@ use colored::Colorize;
 use decompress::{ExtractOptsBuilder};
 use indicatif::{ProgressBar, ProgressDrawTarget};
 use crate::config::wd;
-use crate::consts::{RDM_CACHE_NAME, RDM_DIRECTORY_NAME, RDM_LIBS_NAME};
+use crate::consts::{RDM_CACHE_NAME, RDM_DIRECTORY_NAME, RDM_LIBS_NAME, RDM_PACK_NAME};
 use crate::{log};
 use crate::types::{Distribution, PlatformArch, Version};
 
@@ -101,6 +101,7 @@ impl Dependency
     pb.finish_with_message("done!");
     let target = Path::new(&wd()?)
       .join(RDM_DIRECTORY_NAME)
+      .join(RDM_PACK_NAME)
       .join(RDM_LIBS_NAME)
       .join(name)
       .into_os_string()
