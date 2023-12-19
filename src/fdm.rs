@@ -2,7 +2,7 @@ use std::path::Path;
 use anyhow::Error;
 use crate::cmake::{CMakeFile, FileGlobMode, FileRelativeMode, ListMode};
 use crate::config::wd;
-use crate::consts::{RDM_DIRECTORY_NAME, RDM_LIBS_NAME, RDM_PACK_NAME};
+use crate::consts::{FDM_DIRECTORY_NAME, FDM_LIBS_NAME, FDM_PACK_NAME};
 use crate::registry::REGISTRY;
 use crate::cmake::CMakeCommand::*;
 use crate::log;
@@ -18,22 +18,22 @@ pub fn run() -> Result<(), Error>
     .dump_to_cli()?
     .download_dependencies()?;
   let cmake_path_root = Path::new(&wd()?)
-    .join(RDM_DIRECTORY_NAME)
+    .join(FDM_DIRECTORY_NAME)
     .join("CMakeLists.txt")
     .into_os_string()
     .into_string()
     .expect("os string should be convertible to string");
   let cmake_internal_path = Path::new(&wd()?)
-    .join(RDM_DIRECTORY_NAME)
-    .join(RDM_PACK_NAME)
+    .join(FDM_DIRECTORY_NAME)
+    .join(FDM_PACK_NAME)
     .join("CMakeLists.txt")
     .into_os_string()
     .into_string()
     .expect("os string should be convertible to string");
   let cmake_path = Path::new(&wd()?)
-    .join(RDM_DIRECTORY_NAME)
-    .join(RDM_PACK_NAME)
-    .join(RDM_LIBS_NAME)
+    .join(FDM_DIRECTORY_NAME)
+    .join(FDM_PACK_NAME)
+    .join(FDM_LIBS_NAME)
     .join("CMakeLists.txt")
     .into_os_string()
     .into_string()
@@ -41,12 +41,12 @@ pub fn run() -> Result<(), Error>
   println!();
   log!("creating new root cmake file...");
   CMakeFile::new(&cmake_path_root)?
-    .command(add_subdirectory(RDM_PACK_NAME.to_string()))?
+    .command(add_subdirectory(FDM_PACK_NAME.to_string()))?
     .commit()?;
   log!("creating new root cmake file.....\tOK");
   log!("creating internal cmake...");
   CMakeFile::new(&cmake_internal_path)?
-    .command(add_subdirectory(RDM_LIBS_NAME.to_string()))?
+    .command(add_subdirectory(FDM_LIBS_NAME.to_string()))?
     .commit()?;
   log!("creating internal cmake..........\tOK");
   log!("creating cmake collection file...");

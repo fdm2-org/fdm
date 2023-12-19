@@ -1,7 +1,7 @@
 mod cli;
 mod consts;
 mod config;
-mod rdm2;
+mod fdm;
 mod types;
 mod registry;
 mod manifest;
@@ -12,6 +12,13 @@ use clap::Parser;
 use crate::config::CONFIG;
 
 pub use colored::Colorize;
+
+/*
+    TODO:
+    add gitignore for fdm/rdm2/etc
+    add readme
+    add crc32 hash of toml file to detect changes
+*/
 
 fn main()
 {
@@ -37,7 +44,7 @@ fn main()
     .load_args(&args)
     .dump_to_cli();
   match args.load {
-    true => rdm2::run()
+    true => fdm::run()
       .map_err(|err| {
         fatal_error!("{}", err);
         std::process::exit(1);

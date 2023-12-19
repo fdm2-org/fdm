@@ -1,15 +1,15 @@
 #[derive(clap::Parser)]
 pub struct Args {
-  /// Print rdm2 version
+  /// Print fdm version, name, custom build info
   #[arg(short, long)] pub version: bool,
 
-  /// Load all dependencies for the current project from rdm2.toml file
+  /// Load all dependencies for the current project from fdm.toml file
   #[arg(short, long)] pub load: bool,
 
   /// Overrides default registry url: https://github.com/fdm2-org/fdm-registry
   #[arg(long)] pub registry: Option<String>,
 
-  /// Forces rdm to use local offline registry
+  /// Forces fdm to use local offline registry
   #[arg(long)] pub offline: bool,
 
   /// Specifies the path to local registry

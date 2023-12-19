@@ -8,7 +8,7 @@ use colored::Colorize;
 use decompress::{ExtractOptsBuilder};
 use indicatif::{ProgressBar, ProgressDrawTarget};
 use crate::config::wd;
-use crate::consts::{RDM_CACHE_NAME, RDM_DIRECTORY_NAME, RDM_LIBS_NAME, RDM_PACK_NAME};
+use crate::consts::{FDM_CACHE_NAME, FDM_DIRECTORY_NAME, FDM_LIBS_NAME, FDM_PACK_NAME};
 use crate::{log};
 use crate::types::{Distribution, PlatformArch, Version};
 
@@ -100,9 +100,9 @@ impl Dependency
     }
     pb.finish_with_message("done!");
     let target = Path::new(&wd()?)
-      .join(RDM_DIRECTORY_NAME)
-      .join(RDM_PACK_NAME)
-      .join(RDM_LIBS_NAME)
+      .join(FDM_DIRECTORY_NAME)
+      .join(FDM_PACK_NAME)
+      .join(FDM_LIBS_NAME)
       .join(name)
       .into_os_string()
       .into_string()
@@ -131,8 +131,8 @@ impl Dependency
   fn cache_path(&self, name: &str) -> String
   {
     let path = Path::new(&wd().unwrap_or(String::from("")))
-      .join(RDM_DIRECTORY_NAME)
-      .join(RDM_CACHE_NAME)
+      .join(FDM_DIRECTORY_NAME)
+      .join(FDM_CACHE_NAME)
       .join(format!("{}_{}_{}_{}",
                    name,
                    self.distribution,

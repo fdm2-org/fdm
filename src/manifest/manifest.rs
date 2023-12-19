@@ -4,7 +4,7 @@ use anyhow::{ensure, Error};
 use colored::Colorize;
 use serde::Deserialize;
 use crate::config::wd;
-use crate::consts::RDM_MANIFEST_FILENAME;
+use crate::consts::FDM_MANIFEST_FILENAME;
 use crate::log;
 use crate::manifest::{
   DependencyPT,
@@ -79,7 +79,7 @@ impl Manifest
   pub fn seek() -> Result<Self, Error>
   {
     let path = Path::new(&wd()?)
-      .join(RDM_MANIFEST_FILENAME)
+      .join(FDM_MANIFEST_FILENAME)
       .into_os_string()
       .into_string()
       .expect("os string should be convertible to string");

@@ -3,7 +3,6 @@ cmake-build-*
 
 build*/
 target/
-rdm2/
 logs*/
 doc/html
 doc/doxy.log

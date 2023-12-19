@@ -8,7 +8,7 @@ use url::Url;
 use walkdir::WalkDir;
 use yaml_rust::Yaml;
 use crate::config::{CONFIG, wd};
-use crate::consts::{RDM_DIRECTORY_NAME, RDM_REGISTRY_NAME};
+use crate::consts::{FDM_DIRECTORY_NAME, FDM_REGISTRY_NAME};
 use crate::log;
 use crate::registry::client_builder::{make_client, UserAgent};
 use crate::types::{
@@ -50,8 +50,8 @@ impl Registry
   pub fn new() -> Result<Self, Error>
   {
     let path = Path::new(wd()?.as_str())
-      .join(RDM_DIRECTORY_NAME)
-      .join(RDM_REGISTRY_NAME)
+      .join(FDM_DIRECTORY_NAME)
+      .join(FDM_REGISTRY_NAME)
       .into_os_string()
       .into_string()
       .unwrap_or(String::from(""));
