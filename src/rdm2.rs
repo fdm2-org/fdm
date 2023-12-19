@@ -14,7 +14,7 @@ pub fn run() -> Result<(), Error>
     .unwrap()
     .init_registry()?
     .dump_to_cli()?;
-  let downloaded_names = crate::manifest::Manifest::seek()?
+  let _downloaded_names = crate::manifest::Manifest::seek()?
     .dump_to_cli()?
     .download_dependencies()?;
   let cmake_path_root = Path::new(&wd()?)

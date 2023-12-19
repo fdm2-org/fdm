@@ -123,7 +123,7 @@ impl Dependency
   {
     log!("unpacking...");
     std::fs::create_dir_all(to)?;
-    let file = std::fs::File::open(from)?;
+    let _file = std::fs::File::open(from)?;
     decompress::decompress(from, to, &ExtractOptsBuilder::default().strip(1).build()?)?;
     Ok(())
   }

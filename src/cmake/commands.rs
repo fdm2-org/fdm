@@ -17,6 +17,7 @@ pub enum CMakeCommand
   any(String),
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum FileGlobMode
 {

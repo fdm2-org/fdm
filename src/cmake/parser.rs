@@ -11,6 +11,7 @@ pub struct CMakeFile
 
 impl CMakeFile
 {
+  #[allow(dead_code)]
   pub fn from_file(path: &str) -> Result<Self, Error>
   {
     Ok(Self
@@ -37,13 +38,6 @@ impl CMakeFile
     let mut file = File::create(&self.path)?;
     file.write_all(self.content.as_bytes())?;
     Ok(())
-  }
-
-  pub fn append(&mut self, content: &str) -> Result<&mut Self, Error>
-  {
-    self.content.push_str(content);
-    self.content.push_str("\n");
-    Ok(self)
   }
 
   pub fn command(&mut self, cmd: CMakeCommand) -> Result<&mut Self, Error>

@@ -10,6 +10,7 @@ pub struct Version
 
 impl Version
 {
+  #[allow(dead_code)]
   pub fn new(major: u32, minor: u32, patch: u32) -> Self
   {
     Self
