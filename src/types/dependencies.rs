@@ -2,13 +2,14 @@ use futures_util::stream::StreamExt;
 use std::fmt::Display;
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
+use std::path::{Path};
 use anyhow::{ensure, Error};
 use colored::Colorize;
+use decompress::{ExtractOptsBuilder};
 use indicatif::{ProgressBar, ProgressDrawTarget};
 use crate::config::wd;
-use crate::consts::{RDM_CACHE_NAME, RDM_DIRECTORY_NAME};
-use crate::{fatal_error, log};
+use crate::consts::{RDM_CACHE_NAME, RDM_DIRECTORY_NAME, RDM_LIBS_NAME};
+use crate::{log};
 use crate::types::{Distribution, PlatformArch, Version};
 
 #[derive(Debug, Clone)]
@@ -75,7 +76,10 @@ impl Dependency
     let pb = ProgressBar::new(total)
       .with_style(
         indicatif::ProgressStyle::default_bar()
-          .template("{wide_msg} {spinner:.red} [{bar:20.yellow/white}] {pos:10}/ {len:10} ({percent:3}%)")
+          .template("{wide_msg} {bytes_per_sec:8} {elapsed_precise:8} eta:{eta:3} {spinner:.green} \
+                    [{bar:20.cyan/blue}] \
+                    {bytes:10}/ {total_bytes:10} ({percent:3}%)"
+          )
           .expect("template should be valid")
           .progress_chars("█░░")
       );
@@ -95,6 +99,14 @@ impl Dependency
       pb.set_position(new);
     }
     pb.finish_with_message("done!");
+    let target = Path::new(&wd()?)
+      .join(RDM_DIRECTORY_NAME)
+      .join(RDM_LIBS_NAME)
+      .join(name)
+      .into_os_string()
+      .into_string()
+      .expect("os string should be convertible to string");
+    Self::unpack(&file_path.to_str().expect("file path should be convertible to string"), &target)?;
     Ok(())
   }
 
@@ -103,6 +115,15 @@ impl Dependency
     let p = self.cache_path(name);
     log!("creating cache directory at: ...{}", &p[p.len()-30..]);
     std::fs::create_dir_all(&self.cache_path(name))?;
+    Ok(())
+  }
+
+  fn unpack(from: &str, to: &str) -> Result<(), Error>
+  {
+    log!("unpacking...");
+    std::fs::create_dir_all(to)?;
+    let file = std::fs::File::open(from)?;
+    decompress::decompress(from, to, &ExtractOptsBuilder::default().strip(1).build()?)?;
     Ok(())
   }
 

@@ -22,8 +22,7 @@ indicatif = "0.17.7"
 whoami = "1.4.1"
 walkdir = "2.4.0"
 toml = "0.8.8"
-tar = "0.4.40"
-flate2 = "1.0.28"
+decompress = "0.6.0"
 serde = { version = "1.0.193", features = ["derive"] }
 
 [build-dependencies]
