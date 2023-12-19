@@ -19,5 +19,14 @@ pub struct Args {
   #[arg(long)] pub operating_system: Option<String>,
 
   /// Specifies target architecture. Useful for cross-compiling
-  #[arg(long)] pub architecture: Option<String>
+  #[arg(long)] pub architecture: Option<String>,
+
+  /// Creates empty project with given name in current directory
+  #[arg(short, long)] pub init: Option<String>,
+
+  /// Specifies build system as CMake
+  #[arg(long)] pub cmake: bool,
+
+  /// Specifies build system as Cargo
+  #[arg(long)] pub cargo: bool
 }

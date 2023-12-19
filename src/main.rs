@@ -6,6 +6,7 @@ mod types;
 mod registry;
 mod manifest;
 mod cmake;
+mod init;
 
 use clap::Parser;
 use crate::config::CONFIG;
@@ -18,6 +19,14 @@ fn main()
   if args.version
   {
     cli::out::version();
+    std::process::exit(0);
+  }
+  if args.init.is_some()
+  {
+    init::Initializer::from_args(&args)
+      .expect("failed to initialize")
+      .create()
+      .expect("failed to create");
     std::process::exit(0);
   }
 
