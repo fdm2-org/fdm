@@ -50,7 +50,7 @@ pub fn greet()
 pub fn version()
 {
   println!("{} version {}",
-           "radar dependency manager".cyan().bold(),
+           "free dependency manager".cyan().bold(),
            RDM_VERSION.magenta().bold()
   );
   println!("built from branch: {}",
@@ -65,5 +65,5 @@ pub fn version()
   println!("build timestamp: {}",
            option_env!("SOURCE_TIMESTAMP").unwrap_or("unknown").green().bold()
   );
-  println!("{}", "2023 radar-mms (c) all rights reserved".white());
+  println!("{}", "2023 whs31 (c) no rights reserved".white());
 }

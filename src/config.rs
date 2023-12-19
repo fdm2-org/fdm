@@ -25,7 +25,7 @@ impl Default for Config
     Self
     {
       offline_registry_url: None,
-      online_registry_url: String::from("http://uav.radar-mms.com/gitlab/test/rdm/rdm-registry"),
+      online_registry_url: String::from("https://github.com/fdm2-org/fdm-registry"),
       platform: PlatformArch::from_env().unwrap_or_default()
     }
   }

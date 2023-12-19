@@ -6,7 +6,7 @@ pub struct Args {
   /// Load all dependencies for the current project from rdm2.toml file
   #[arg(short, long)] pub load: bool,
 
-  /// Overrides default registry url: http://uav.radar-mms.com/gitlab/test/rdm/rdm-registry
+  /// Overrides default registry url: https://github.com/fdm2-org/fdm-registry
   #[arg(long)] pub registry: Option<String>,
 
   /// Forces rdm to use local offline registry
